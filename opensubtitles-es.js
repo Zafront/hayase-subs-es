@@ -1,16 +1,15 @@
 export default new class OpenSubtitlesES {
 
-    // test() no puede hacer fetch externo (no hay query.fetch disponible y el sandbox
-    // bloquea CORS). La validación real ocurre en single() con la API key.
     async test() {
         return true
     }
 
-    // Busca subtítulos en español para un episodio concreto
     async single(query, options) {
-        const { anilistId, imdbId, episode, titles } = query
-        // Usar query.fetch si existe (CORS-enabled), si no el fetch global
+        const { imdbId, episode, titles } = query
         const apiFetch = (typeof query.fetch === 'function') ? query.fetch : fetch
+
+        console.log('[ES] single() llamado — episode:', episode, 'imdbId:', imdbId, 'titles:', titles?.[0])
+        console.log('[ES] options recibidos:', JSON.stringify(options))
 
         const apiKey = options?.apiKey
         if (!apiKey) throw new Error('Se requiere una API Key de OpenSubtitles. Configúrala en los ajustes de la extensión.')
@@ -21,7 +20,7 @@ export default new class OpenSubtitlesES {
             'Content-Type': 'application/json'
         }
 
-        // Construir los parámetros de búsqueda
+        // Construir parámetros de búsqueda
         const params = new URLSearchParams({
             languages: 'es',
             order_by: 'download_count',
@@ -31,35 +30,42 @@ export default new class OpenSubtitlesES {
         if (episode != null) params.set('episode_number', String(episode))
 
         if (imdbId) {
-            // OpenSubtitles espera el ID sin "tt" y sin ceros iniciales
             params.set('imdb_id', String(imdbId).replace(/^tt0*/, ''))
         } else if (titles?.length) {
             params.set('query', titles[0])
         } else {
+            console.log('[ES] Sin imdbId ni títulos, devolviendo []')
             return []
         }
 
-        // Paso 1: Buscar subtítulos disponibles
+        const searchUrl = `https://api.opensubtitles.com/api/v1/subtitles?${params.toString()}`
+        console.log('[ES] Buscando en:', searchUrl)
+
+        // Paso 1: Buscar subtítulos
         let subtitles
         try {
-            const searchRes = await apiFetch(
-                `https://api.opensubtitles.com/api/v1/subtitles?${params.toString()}`,
-                { headers }
-            )
+            const searchRes = await apiFetch(searchUrl, { headers })
+            console.log('[ES] Respuesta búsqueda HTTP:', searchRes.status)
             if (!searchRes.ok) throw new Error(`HTTP ${searchRes.status}`)
             const searchData = await searchRes.json()
             subtitles = searchData?.data ?? []
+            console.log('[ES] Subtítulos encontrados:', subtitles.length)
         } catch (e) {
+            console.log('[ES] ERROR en búsqueda:', e.message)
             throw new Error(`Error buscando en OpenSubtitles: ${e.message}`)
         }
 
-        if (!subtitles.length) return []
+        if (!subtitles.length) {
+            console.log('[ES] Sin resultados para este episodio')
+            return []
+        }
 
-        // Paso 2: Obtener los enlaces de descarga para los primeros resultados
+        // Paso 2: Obtener enlaces de descarga
         const results = []
 
         for (const sub of subtitles.slice(0, 5)) {
             const fileId = sub?.attributes?.files?.[0]?.file_id
+            console.log('[ES] Procesando fileId:', fileId)
             if (!fileId) continue
 
             try {
@@ -68,21 +74,22 @@ export default new class OpenSubtitlesES {
                     headers,
                     body: JSON.stringify({ file_id: fileId })
                 })
-
-                if (!dlRes.ok) continue
-
+                console.log('[ES] Respuesta descarga HTTP:', dlRes.status)
+                if (!dlRes.ok) {
+                    const txt = await dlRes.text()
+                    console.log('[ES] Error descarga body:', txt)
+                    continue
+                }
                 const dlData = await dlRes.json()
+                console.log('[ES] Link obtenido:', dlData?.link?.slice(0, 60))
                 if (!dlData?.link) continue
-
-                results.push({
-                    url: dlData.link,
-                    language: 'ES'
-                })
-            } catch {
-                // Si falla un enlace individual, continuar con el siguiente
+                results.push({ url: dlData.link, language: 'ES' })
+            } catch (e) {
+                console.log('[ES] ERROR en descarga fileId', fileId, ':', e.message)
             }
         }
 
+        console.log('[ES] Resultados finales:', results.length)
         return results
     }
 }
