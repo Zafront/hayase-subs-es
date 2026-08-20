@@ -4,7 +4,7 @@
         "id": "opensubtitles-es",
         "name": "OpenSubtitles ES",
         "description": "Subtítulos en español desde OpenSubtitles",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "type": "subtitle",
         "accuracy": "medium",
         "media": "sub",
@@ -18,7 +18,17 @@
         "options": {
             "apiKey": {
                 "type": "string",
-                "description": "Tu API Key de OpenSubtitles (regístrate en opensubtitles.com)",
+                "description": "API Key de OpenSubtitles (obligatorio). Regístrate en opensubtitles.com",
+                "default": ""
+            },
+            "username": {
+                "type": "string",
+                "description": "Tu usuario de OpenSubtitles (opcional, para más de 5 descargas/día)",
+                "default": ""
+            },
+            "password": {
+                "type": "string",
+                "description": "Tu contraseña de OpenSubtitles (opcional, para más de 5 descargas/día)",
                 "default": ""
             }
         }
