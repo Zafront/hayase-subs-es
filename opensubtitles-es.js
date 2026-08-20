@@ -1,9 +1,17 @@
 export default new class OpenSubtitlesES {
 
     // Verifica que la API de OpenSubtitles esté accesible
-    async test() {
-        const res = await fetch('https://api.opensubtitles.com/api/v1')
-        if (!res.ok) throw new Error(`OpenSubtitles no responde: HTTP ${res.status}`)
+    async test(options) {
+        const apiKey = options?.apiKey
+        if (!apiKey) throw new Error('Configura tu API Key de OpenSubtitles en los ajustes de la extensión.')
+
+        const res = await fetch('https://api.opensubtitles.com/api/v1/infos/languages', {
+            headers: {
+                'Api-Key': apiKey,
+                'User-Agent': 'HayaseSubsES v1.0.0'
+            }
+        })
+        if (!res.ok) throw new Error(`OpenSubtitles no responde: HTTP ${res.status}. Comprueba que tu API Key es correcta.`)
         return true
     }
 
