@@ -1,45 +1,66 @@
-export default class extends Extension {
+export default new class extends SubtitleSource {
 
-    // Cambiamos el nombre de la función a lo que Hayase espera nativamente
+    async test() {
+        console.log("========== TEST ==========");
+        console.log("SubtitleSource cargado correctamente");
+        console.log("==========================");
+
+        return true;
+    }
+
     async single(query) {
 
-        console.log("=======================================");
-        console.log("🕵️ INICIANDO DIAGNÓSTICO DE HAYASE 🕵️");
-        console.log("=======================================");
+        console.log("");
+        console.log("========== QUERY ==========");
+        console.log(query);
+        console.log("==========================");
 
-        // --- PRUEBA 1: ¿Qué contiene 'query'? ---
-        console.log("\n>>> PRUEBA 1: CONTENIDO DE QUERY:");
+        console.log("");
+        console.log("========== KEYS ==========");
+        console.log(Object.keys(query));
+        console.log("==========================");
+
+        console.log("");
+        console.log("========== QUERY JSON ==========");
         try {
-            // Lo convertimos a texto para que la terminal lo lea fácil
             console.log(JSON.stringify(query, null, 2));
         } catch (e) {
-            console.log("No se pudo parsear query:", query);
+            console.log("No se pudo convertir a JSON");
         }
 
-        // --- PRUEBA 2: ¿Admite cabeceras el fetch nativo? ---
-        console.log("\n>>> PRUEBA 2: ENVIANDO HEADERS A HTTPBIN...");
+        console.log("===============================");
+
+        console.log("");
+        console.log("========== FETCH TEST ==========");
+
         try {
-            // httpbin.org es una web que simplemente te devuelve como un espejo lo que le envías
-            const res = await query.fetch("https://httpbin.org/headers", {
+
+            const res = await query.fetch("https://httpbin.org/anything", {
+                method: "GET",
                 headers: {
-                    "Api-Key": "LLAVE-PRUEBA-ZAFRONT",
-                    "User-Agent": "Hayase Test"
+                    "Api-Key": "TEST_API_KEY",
+                    "User-Agent": "Hayase Debug"
                 }
             });
-            console.log("Respuesta del servidor espejo:", res);
-        } catch (error) {
-            console.log("❌ Falló la Prueba 2. query.fetch no funciona así:", error.message);
+
+            console.log("HTTP:", res.status);
+
+            const data = await res.json();
+
+            console.log("Respuesta:");
+            console.log(data);
+
+        } catch (err) {
+
+            console.log("ERROR EN FETCH");
+            console.log(err);
+
         }
 
-        // --- PRUEBA 3: Forzar el formato de salida ---
-        console.log("\n>>> PRUEBA 3: ENVIANDO SUBTÍTULO FALSO...");
+        console.log("==============================");
 
-        // Le devolvemos a Hayase un enlace fijo (usamos una URL tuya que sabemos que no rompe nada)
-        return [
-            {
-                url: "https://raw.githubusercontent.com/Zafront/hayase-subs-es/main/index.json",
-                language: "ES"
-            }
-        ];
+        return [];
+
     }
+
 }
