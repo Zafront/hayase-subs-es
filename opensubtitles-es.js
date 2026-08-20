@@ -1,43 +1,45 @@
-export default class OpenSubtitlesEs {
-    // Hayase llamará a esta función automáticamente
-    async searchSubtitles(title, episode) {
+export default class extends Extension {
+
+    // Cambiamos el nombre de la función a lo que Hayase espera nativamente
+    async single(query) {
+
+        console.log("=======================================");
+        console.log("🕵️ INICIANDO DIAGNÓSTICO DE HAYASE 🕵️");
+        console.log("=======================================");
+
+        // --- PRUEBA 1: ¿Qué contiene 'query'? ---
+        console.log("\n>>> PRUEBA 1: CONTENIDO DE QUERY:");
         try {
-            // 1. Buscamos el ID
-            const searchUrl = `https://api.opensubtitles.com/api/v1/subtitles?query=${encodeURIComponent(title)}&languages=es`;
-            const searchRes = await fetch(searchUrl, {
-                method: 'GET',
+            // Lo convertimos a texto para que la terminal lo lea fácil
+            console.log(JSON.stringify(query, null, 2));
+        } catch (e) {
+            console.log("No se pudo parsear query:", query);
+        }
+
+        // --- PRUEBA 2: ¿Admite cabeceras el fetch nativo? ---
+        console.log("\n>>> PRUEBA 2: ENVIANDO HEADERS A HTTPBIN...");
+        try {
+            // httpbin.org es una web que simplemente te devuelve como un espejo lo que le envías
+            const res = await query.fetch("https://httpbin.org/headers", {
                 headers: {
-                    'Api-Key': 'PNHuQbK2DJz9WKGmi6uTXxLQoUXutP9K',
-                    'User-Agent': 'HayaseSubsZafront v1.0'
+                    "Api-Key": "LLAVE-PRUEBA-ZAFRONT",
+                    "User-Agent": "Hayase Test"
                 }
             });
-            const searchData = await searchRes.json();
-
-            if (!searchData.data || searchData.data.length === 0) {
-                return null; // No hay subtítulos
-            }
-
-            const fileId = parseInt(searchData.data[0].attributes.files[0].file_id, 10);
-
-            // 2. Pedimos el enlace de descarga
-            const downloadUrl = 'https://api.opensubtitles.com/api/v1/download';
-            const downloadRes = await fetch(downloadUrl, {
-                method: 'POST',
-                headers: {
-                    'Api-Key': 'PNHuQbK2DJz9WKGmi6uTXxLQoUXutP9K',
-                    'User-Agent': 'HayaseSubsZafront v1.0',
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ file_id: fileId })
-            });
-            const downloadData = await downloadRes.json();
-
-            // Le devolvemos el enlace limpio a la aplicación
-            return downloadData.link;
-
+            console.log("Respuesta del servidor espejo:", res);
         } catch (error) {
-            return null; // Si algo falla, que Hayase no se cuelgue
+            console.log("❌ Falló la Prueba 2. query.fetch no funciona así:", error.message);
         }
+
+        // --- PRUEBA 3: Forzar el formato de salida ---
+        console.log("\n>>> PRUEBA 3: ENVIANDO SUBTÍTULO FALSO...");
+
+        // Le devolvemos a Hayase un enlace fijo (usamos una URL tuya que sabemos que no rompe nada)
+        return [
+            {
+                url: "https://raw.githubusercontent.com/Zafront/hayase-subs-es/main/index.json",
+                language: "ES"
+            }
+        ];
     }
 }
