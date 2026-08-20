@@ -4,7 +4,7 @@
         "id": "opensubtitles-es",
         "name": "OpenSubtitles ES",
         "description": "Subtítulos en español desde OpenSubtitles",
-        "version": "1.0.3",
+        "version": "1.0.4",
         "type": "subtitle",
         "accuracy": "medium",
         "media": "sub",
