@@ -1,10 +1,13 @@
 export default new class OpenSubtitlesES {
 
     // Verifica que el servidor de OpenSubtitles es accesible
-    // Nota: test() no recibe options en Hayase, por eso solo comprobamos conectividad
+    // Solo podemos usar el dominio registrado en "url" del manifest (CORS)
+    // Un 401/403 sin API key significa que el servidor responde correctamente
     async test() {
-        const res = await fetch('https://www.opensubtitles.com')
-        if (!res.ok) throw new Error('OpenSubtitles no está disponible en este momento.')
+        const res = await fetch('https://api.opensubtitles.com/api/v1/infos/languages', {
+            headers: { 'User-Agent': 'HayaseSubsES v1.0.0' }
+        })
+        if (res.status >= 500) throw new Error('OpenSubtitles no está disponible en este momento.')
         return true
     }
 
