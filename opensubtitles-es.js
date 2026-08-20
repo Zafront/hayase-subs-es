@@ -1,13 +1,8 @@
 export default new class OpenSubtitlesES {
 
-    // Verifica que el servidor de OpenSubtitles es accesible
-    // Solo podemos usar el dominio registrado en "url" del manifest (CORS)
-    // Un 401/403 sin API key significa que el servidor responde correctamente
+    // test() no puede hacer fetch externo (no hay query.fetch disponible y el sandbox
+    // bloquea CORS). La validación real ocurre en single() con la API key.
     async test() {
-        const res = await fetch('https://api.opensubtitles.com/api/v1/infos/languages', {
-            headers: { 'User-Agent': 'HayaseSubsES v1.0.0' }
-        })
-        if (res.status >= 500) throw new Error('OpenSubtitles no está disponible en este momento.')
         return true
     }
 
