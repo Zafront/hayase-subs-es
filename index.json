@@ -1,22 +1,26 @@
 [
-  {
-    "manifestVersion": 2,
-    "name": "OpenSubtitles ES",
-    "id": "zafront.opensubtitles-es",
-    "version": "1.0.0",
-    "type": "subtitle",
-    "accuracy": "high",
-    "updatePeers": false,
-    "ratio": 0,
-    "media": "sub",
-    "languages": [
-      "ES"
-    ],
-    "nsfw": false,
-    "url": "aHR0cHM6Ly9hcGkub3BlbnN1YnRpdGxlcy5jb20=",
-    "description": "Busca subtítulos en español usando la API oficial de OpenSubtitles.",
-    "icon": "https://raw.githubusercontent.com/Zafront/hayase-opensubtitles-es/main/icon.png",
-    "update": "https://raw.githubusercontent.com/Zafront/hayase-opensubtitles-es/main/index.json",
-    "code": "https://raw.githubusercontent.com/Zafront/hayase-opensubtitles-es/main/opensubtitles-es.js"
-  }
+    {
+        "manifestVersion": 2,
+        "id": "opensubtitles-es",
+        "name": "OpenSubtitles ES",
+        "description": "Subtítulos en español desde OpenSubtitles",
+        "version": "1.0.0",
+        "type": "subtitle",
+        "accuracy": "medium",
+        "media": "sub",
+        "languages": [
+            "ES"
+        ],
+        "icon": "https://raw.githubusercontent.com/Zafront/hayase-subs-es/main/icon.png",
+        "code": "https://raw.githubusercontent.com/Zafront/hayase-subs-es/main/opensubtitles-es.js",
+        "update": "https://raw.githubusercontent.com/Zafront/hayase-subs-es/main/index.json",
+        "url": "aHR0cHM6Ly9hcGkub3BlbnN1YnRpdGxlcy5jb20=",
+        "options": {
+            "apiKey": {
+                "type": "string",
+                "description": "Tu API Key de OpenSubtitles (regístrate en opensubtitles.com)",
+                "default": ""
+            }
+        }
+    }
 ]
