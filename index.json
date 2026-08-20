@@ -3,16 +3,13 @@
         "manifestVersion": 2,
         "id": "opensubtitles-es",
         "name": "OpenSubtitles ES",
-        "description": "Subtítulos en español para anime",
+        "description": "Subtítulos en español desde OpenSubtitles",
         "version": "1.0.0",
         "type": "subtitle",
-        "accuracy": "high",
-        "media": "sub",
         "languages": [
             "ES"
         ],
-        "icon": "https://raw.githubusercontent.com/Zafront/hayase-subs-es/main/icon.png",
-        "update": "https://raw.githubusercontent.com/Zafront/hayase-subs-es/main/index.json",
-        "code": "https://raw.githubusercontent.com/Zafront/hayase-subs-es/main/opensubtitles-es.js"
+        "icon": "https://raw.githubusercontent.com/Zafront/hayase-opensubtitles-es/main/icon.png",
+        "code": "https://raw.githubusercontent.com/Zafront/hayase-opensubtitles-es/main/opensubtitles-es.js"
     }
 ]
